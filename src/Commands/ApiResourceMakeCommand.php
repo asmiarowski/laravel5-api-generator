@@ -91,9 +91,13 @@ class ApiResourceMakeCommand extends Command
         $this->info(ucfirst($type) . ' created successfully.');
     }
     
+    /**
+     * Add routes for resource
+     */
     protected function addRoute() {
-        $line = sprintf("%sRoute::resource('%s', '%sController');%s", PHP_EOL, $this->varModelName, $this->modelName, PHP_EOL);
-        $line.= sprintf("Route::put('%s/{%s}', '%sController@store');%s", $this->varModelName, $this->varModelName, $this->modelName, PHP_EOL);
+        $line = sprintf("%sRoute::pattern('%s', '[0-9]+');%s", PHP_EOL, $this->varModelName, PHP_EOL);
+        $line .= sprintf("Route::resource('%s', '%sController', ['only' => ['index', 'show', 'store', 'destroy']]);%s", $this->varModelName, $this->modelName, PHP_EOL);
+        $line .= sprintf("Route::put('%s/{%s}', '%sController@store');%s", $this->varModelName, $this->varModelName, $this->modelName, PHP_EOL);
         $this->files->append($this->getPath('route'), $line);
     }
     
@@ -180,6 +184,11 @@ class ApiResourceMakeCommand extends Command
         return $this;
     }
 
+    /**
+     * Replace validation rules in request.stub
+     * @param  string $stub
+     * @return void
+     */
     protected function replaceValidationStub(&$stub)
     {
         $rules = '';
@@ -189,6 +198,11 @@ class ApiResourceMakeCommand extends Command
         $stub = str_replace('{{validation_rules}}', $rules, $stub);
     }
     
+    /**
+     * Build validation rules for Request class
+     * @param  array  $schema 
+     * @return void
+     */
     protected function buildValidation(array $schema) {
         foreach ($schema as $s) {
             $this->validationRules[$s['name']] = ['required'];
