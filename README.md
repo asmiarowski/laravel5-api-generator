@@ -12,7 +12,7 @@ Example command
 php artisan make:api-resource emails --schema="email:email:unique; title:string; body:text; status:integer:default(1)" --softdeletes
 ```
 
-Will create:
+Generates Controller:
 ```
 <?php
 namespace App\Http\Controllers;
@@ -76,6 +76,7 @@ class EmailController extends Controller
 }
 ```
 
+Generates Request:
 ```
 <?php
 namespace App\Http\Requests;
@@ -110,7 +111,7 @@ class EmailRequest extends Request
     }
 }
 ```
-
+Generates Model:
 ```
 <?php namespace App;
 
@@ -122,7 +123,7 @@ class Email extends Model {
 
 }
 ```
-
+Generates Migration:
 ```
 <?php
 
@@ -161,7 +162,7 @@ class CreateEmailsTable extends Migration
 }
 ```
 
-routes.php
+Appends routes.php
 ```
 Route::resource('email', 'EmailController');
 Route::put('email/{email}', 'EmailController@store');
