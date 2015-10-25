@@ -3,7 +3,7 @@
     "description": "Artisan generator for API reasource.",
     "keywords": ["laravel", "generators", "REST API"],
     "license": "MIT",
-    "version": "dev-master",
+    "homepage": "https://github.com/asmiarowski/laravel5-api-generator",
     "require": {
         "php": ">=5.4.0",
         "icanboogie/inflector": "^1.3",
