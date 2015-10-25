@@ -11,7 +11,7 @@ if ($this->app->environment() == 'local') {
     $this->app->register('Smiarowski\Generators\GeneratorsServiceProvider');
 }
 ```
-For POST / PUT data to work you either have to send your request with `Accept: application/json` header or set up only json responses globally in app/Http/Requests/Request.php like so:
+For POST / PUT data to work you either have to send your request with `Accept: application/json` header or set up json responses globally in app/Http/Requests/Request.php like so:
 ```
 /**
  * Overwrite Laravel Request method becasue API is always returning json
