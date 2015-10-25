@@ -14,7 +14,7 @@ if ($this->app->environment() == 'local') {
 For POST / PUT data to work you either have to send your request with `Accept: application/json` header or set up json responses globally in app/Http/Requests/Request.php like so:
 ```
 /**
- * Overwrite Laravel Request method becasue API is always returning json
+ * Overwrite Laravel Request method because API is always returning json
  * @return bool
  */
 public function wantsJson()
