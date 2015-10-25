@@ -1,0 +1,60 @@
+<?php
+namespace {{app_name}}\Http\Controllers;
+
+use {{app_name}}\Http\Requests\{{model_name}}Request;
+use {{app_name}}\Http\Controllers\Controller;
+use {{app_name}}\{{model_name}};
+
+class {{model_name}}Controller extends Controller
+{
+    /**
+    * Display a listing of the resource.
+    *
+    * @return \Illuminate\Http\JsonResponse
+    */
+    public function index()
+    {
+        ${{var_model_name_plural}} = {{model_name}}::all();
+
+        return response()->json(compact('{{var_model_name_plural}}'));
+    }
+
+    /**
+    * Store or update a newly created resource in storage.
+    *
+    * @param  \{{app_name}}\Http\Requests\{{model_name}}Request $request
+    * @return \Illuminate\Http\JsonResponse
+    */
+    public function store({{model_name}}Request $request, $id = 0)
+    {
+        ${{var_model_name}} = {{model_name}}::updateOrCreate(['id' => $id], $request->input());
+
+        return response()->json(compact('{{var_model_name}}'));
+    }
+
+    /**
+    * Display the specified resource.
+    *
+    * @param  int  $id
+    * @return \Illuminate\Http\JsonResponse
+    */
+    public function show($id)
+    {
+        ${{var_model_name}} = {{model_name}}::find($id);
+
+        return response()->json(compact('{{var_model_name}}'));
+    }
+
+    /**
+    * Remove the specified resource from storage.
+    *
+    * @param  int  $id
+    * @return \Illuminate\Http\JsonResponse
+    */
+    public function destroy($id)
+    {
+        $success = {{model_name}}::destroy($id);
+
+        return response()->json(compact('success'));
+    }
+}

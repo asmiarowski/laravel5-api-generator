@@ -1,0 +1,9 @@
+<?php namespace {{app_name}};
+
+use Illuminate\Database\Eloquent\Model;
+
+class {{model_name}} extends Model {
+
+    protected $guarded = ['id', 'created_at', 'updated_at'{{guarded_soft_deletes}}];
+
+}
