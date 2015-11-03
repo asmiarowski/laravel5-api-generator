@@ -5,11 +5,10 @@ use Illuminate\Console\AppNamespaceDetectorTrait;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Composer;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use ICanBoogie\Inflector;
 use Smiarowski\Generators\Migrations\SchemaParser;
 use Smiarowski\Generators\Migrations\SyntaxBuilder;
+use Smiarowski\Generators\Migrations\ValidationBuilder;
 
 class ApiResourceMakeCommand extends Command
 {
@@ -28,7 +27,11 @@ class ApiResourceMakeCommand extends Command
      * @var string
      */
     protected $description = 'Create a new REST API resource: controller, model, request, migration and route';
-    
+
+    /**
+     * Name of the table for migration
+     * @var string
+     */
     protected $tableName;
     protected $varModelName;
     protected $varModelNamePlural;
@@ -64,7 +67,10 @@ class ApiResourceMakeCommand extends Command
         $this->addRoute();
         $this->composer->dumpAutoloads();
     }
-    
+
+    /**
+     * Set up of attributes
+     */
     protected function setAttribs() {
         $name = strtolower($this->argument('name'));
         
@@ -72,9 +78,12 @@ class ApiResourceMakeCommand extends Command
         $this->varModelName = $this->inflector->singularize($this->inflector->camelize($name, Inflector::DOWNCASE_FIRST_LETTER));
         $this->varModelNamePlural = $this->inflector->pluralize($this->varModelName);
         $this->modelName = ucfirst($this->varModelName);
-        $this->meta = ['action' => 'create', 'table' => $this->tableName];
     }
-    
+
+    /**
+     * Creates generated file of specified type
+     * @param string $type
+     */
     protected function createFile($type = 'migration') {
         if ($this->files->exists($path = $this->getPath($type))) {
             foreach ($this->createdFiles as $filePath) {
@@ -132,6 +141,7 @@ class ApiResourceMakeCommand extends Command
             case 'route':
                 return sprintf('%s/Http/routes.php', app_path());
         }
+        return '';
     }
     
     /**
@@ -178,7 +188,7 @@ class ApiResourceMakeCommand extends Command
         if ($schema = $this->option('schema')) {
             $schema = (new SchemaParser)->parse($schema);
         }
-        $this->buildValidation($schema);
+        $this->validationRules = (new ValidationBuilder($this->tableName, $this->option('softdeletes')))->build($schema);
         $stub = (new SyntaxBuilder)->create($schema, $stub);
         
         return $this;
@@ -196,77 +206,5 @@ class ApiResourceMakeCommand extends Command
             $rules .= sprintf('%s\'%s\' => \'%s\',%s', str_repeat(' ', 12), $column, implode('|', $rule), PHP_EOL);
         }
         $stub = str_replace('{{validation_rules}}', $rules, $stub);
-    }
-    
-    /**
-     * Build validation rules for Request class
-     * @param  array  $schema 
-     * @return void
-     */
-    protected function buildValidation(array $schema) {
-        foreach ($schema as $s) {
-            $this->validationRules[$s['name']] = ['required'];
-            $this->typeToValidator($s['name'], $s['type']);
-            $this->optionsToValidator($s['name'], $s['options']);
-        }
-    }
-    
-    /**
-     * Finds validation rule for field type specified in schema building
-     * @param string $type
-     * @return void
-     */
-    protected function typeToValidator($name, $type) {
-        switch ($type) {
-            case 'string':
-            case 'integer':
-            case 'email':
-            case 'boolean':
-            case 'date':
-            case 'json':
-                $this->validationRules[$name][] = $type;
-                break;
-            case 'dateTime':
-                $this->validationRules[$name][] = 'date';
-                break;
-            case 'url':
-                $this->validationRules[$name][] = 'text';
-                break;
-            case 'float':
-            case 'double':
-            case 'decimal':
-                $this->validationRules[$name][] = 'numeric';
-                break;
-            case 'tinyInteger':
-            case 'smallIngeger':
-            case 'mediumInteger':
-            case 'bigInteger':
-                $this->validationRules[$name][] = 'integer';
-                break;
-            case 'char':
-            case 'text':
-            case 'mediumText':
-            case 'longText':
-                $this->validationRules[$name][] = 'string';
-                break;
-            case 'jsonb':
-                $this->validationRules[$name][] = 'json';
-                break;
-        }
-    }
-    
-    /**
-     * Finds validation rules for options part of schema
-     * @param array $options
-     * @return void
-     */
-    protected function optionsToValidator($name, array $options) {
-        foreach ($options as $key => $value) {
-            $value = str_replace('\'', '', $value);
-            if ($key == 'unique' && $value) $this->validationRules[$name][] = sprintf('unique:%s', $this->tableName);
-            if ($key == 'on') $this->validationRules[$name][] = sprintf('exists:%s,id', $value);
-            if ($key == 'nullable' && $value) $this->validationRules[$name] = array_except($this->validationRules[$name], 'required');
-            if ($key == 'unsigned' && $value) $this->validationRules[$name][] = 'min:0';
-        }
     }
 }

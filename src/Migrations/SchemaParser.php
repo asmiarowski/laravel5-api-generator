@@ -2,6 +2,8 @@
 
 namespace Smiarowski\Generators\Migrations;
 
+use Smiarowski\Generators\Exceptions\UnsupportedColumnTypeException;
+
 class SchemaParser
 {
     /**
@@ -10,6 +12,11 @@ class SchemaParser
      * @var array
      */
     private $schema = [];
+    private $types = [
+        'bigIncrements', 'bigInteger', 'binary', 'boolean', 'char', 'date', 'dateTime', 'decimal', 'double', 'enum',
+        'float', 'integer', 'json', 'jsonb', 'longText', 'mediumInteger', 'mediumText', 'morphs', 'nullableTimestamps',
+        'rememberToken', 'smallInteger', 'string', 'text', 'time', 'tinyInteger', 'timestamp', 'email', 'url'
+    ];
 
     /**
      * Parse the command line migration schema.
@@ -71,10 +78,12 @@ class SchemaParser
     /**
      * Get the segments of the schema field.
      *
-     * @param  string $field
+     * @param string $field
+     * @param bool $ignoreTypeCheck
+     * @throws UnsupportedColumnTypeException
      * @return array
      */
-    private function parseSegments($field)
+    private function parseSegments($field, $ignoreTypeCheck = false)
     {
         $segments = explode(':', $field);
 
@@ -89,6 +98,9 @@ class SchemaParser
             $type = $matches[1];
             $arguments = explode(',', $matches[2]);
         }
+        if (!$ignoreTypeCheck && !in_array($type, $this->types)) {
+            throw new UnsupportedColumnTypeException($type);
+        }
 
         return compact('name', 'type', 'arguments', 'options');
     }
@@ -101,7 +113,8 @@ class SchemaParser
      */
     private function parseOptions($options)
     {
-        if (empty($options)) return [];
+        $results = [];
+        if (empty($options)) return $results;
 
         foreach ($options as $option) {
             if (str_contains($option, '(')) {
@@ -129,7 +142,7 @@ class SchemaParser
             $this->getTableNameFromForeignKey($segments['name'])
         );
 
-        $this->addField($this->parseSegments($string));
+        $this->addField($this->parseSegments($string, true));
     }
 
     /**
@@ -151,7 +164,7 @@ class SchemaParser
      * @return bool
      */
     private function fieldNeedsForeignConstraint($segments)
-{
+    {
         return array_key_exists('foreign', $segments['options']);
     }
 }

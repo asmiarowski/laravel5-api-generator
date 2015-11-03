@@ -17,5 +17,8 @@
         "psr-4": {
             "Smiarowski\\Generators\\": "src/"
         }
+    },
+    "require-dev": {
+        "phpspec/phpspec": "~2.1"
     }
 }
