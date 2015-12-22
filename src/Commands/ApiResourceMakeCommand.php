@@ -4,7 +4,7 @@ namespace Smiarowski\Generators\Commands;
 use Illuminate\Console\AppNamespaceDetectorTrait;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Foundation\Composer;
+use Illuminate\Support\Composer;
 use ICanBoogie\Inflector;
 use Smiarowski\Generators\Migrations\SchemaParser;
 use Smiarowski\Generators\Migrations\SyntaxBuilder;
@@ -39,12 +39,25 @@ class ApiResourceMakeCommand extends Command
     protected $fileTypes = ['migration', 'controller', 'model', 'request'];
     protected $createdFiles = [];
     protected $validationRules = [];
+
+    /**
+     * @var Composer
+     */
+    protected $composer;
+    /**
+     * @var Filesystem
+     */
+    protected $files;
+    /**
+     * @var Inflector
+     */
+    protected $inflector;
     
     /**
      * Create a new command instance.
      *
      * @param \Illuminate\Filesystem\Filesystem $files
-     * @param \Illuminate\Foundation\Composer $composer
+     * @param \Illuminate\Support\Composer $composer
      */
     public function __construct(Filesystem $files, Composer $composer) {
         parent::__construct();
