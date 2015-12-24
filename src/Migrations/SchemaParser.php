@@ -27,6 +27,7 @@ class SchemaParser
      */
     public function parse($schema)
     {
+        $this->cleanSchema($schema);
         $fields = $this->splitIntoFields($schema);
 
         foreach ($fields as $field) {
@@ -49,6 +50,11 @@ class SchemaParser
         }
 
         return $this->schema;
+    }
+
+    protected function cleanSchema(&$schema)
+    {
+        $schema = rtrim($schema, ";");
     }
 
     /**

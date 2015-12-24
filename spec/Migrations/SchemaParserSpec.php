@@ -15,7 +15,7 @@ class SchemaParserSpec extends ObjectBehavior
     function it_parses_one_field_schema()
     {
         $this->parse('name:string');
-        $this->parse('name: string')
+        $this->parse('name: string;')
             ->shouldReturn([
             ['name' => 'name', 'type' => 'string', 'arguments' => [], 'options' => []],
             ['name' => 'name', 'type' => 'string', 'arguments' => [], 'options' => []]

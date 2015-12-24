@@ -2,8 +2,6 @@
 
 namespace Smiarowski\Generators\Migrations;
 
-use Laracasts\Generators\GeneratorException;
-
 class SyntaxBuilder
 {
     /**
@@ -16,8 +14,8 @@ class SyntaxBuilder
     /**
      * Create the PHP syntax for the given schema.
      *
-     * @param  array $schema
-     * @param  array $meta
+     * @param  string $schema
+     * @param  string $stub
      * @return string
      */
     public function create($schema, $stub)
