@@ -146,15 +146,21 @@ class ApiResourceMakeCommand extends Command
             case 'migration':
                 return sprintf('%s/database/migrations/%s_create_%s_table.php', base_path(), date('Y_m_d_His'), $this->tableName);
             case 'controller':
-                return sprintf('%s/Http/Controllers/%sController.php', app_path(), $this->modelName);
+                return sprintf('%s/Http/Controllers/%sController.php', $this->app_path(), $this->modelName);
             case 'model':
-                return sprintf('%s/%s.php', app_path(), $this->modelName);
+                return sprintf('%s/%s.php', $this->app_path(), $this->modelName);
             case 'request':
-                return sprintf('%s/Http/Requests/%sRequest.php', app_path(), $this->modelName);
+                return sprintf('%s/Http/Requests/%sRequest.php', $this->app_path(), $this->modelName);
             case 'route':
-                return sprintf('%s/Http/routes.php', app_path());
+                return sprintf('%s/Http/routes.php', $this->app_path());
         }
         return '';
+    }
+
+    protected function app_path() {
+        if (function_exists('app_path')) return app_path();
+
+        return base_path() . '/app';
     }
     
     /**
