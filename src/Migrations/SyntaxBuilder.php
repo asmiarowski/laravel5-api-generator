@@ -20,19 +20,6 @@ class SyntaxBuilder
      */
     public function create($schema, $stub)
     {
-        return $this->createSchemaForUpMethod($schema, $stub);
-    }
-
-    /**
-     * Create the schema for the "up" method.
-     *
-     * @param  string $schema
-     * @param  string $stub
-     * @return string
-     * @throws GeneratorException
-     */
-    private function createSchemaForUpMethod($schema, $stub)
-    {
         $fields = $this->constructSchema($schema);
 
         return $this->insert($fields)->into($stub);
@@ -64,30 +51,17 @@ class SyntaxBuilder
     }
 
     /**
-     * Get the wrapper template for a "create" action.
-     *
-     * @return string
-     */
-    private function getCreateSchemaWrapper()
-    {
-        return file_get_contents(__DIR__ . '/../stubs/migration.stub');
-    }
-
-    /**
      * Construct the schema fields.
      *
      * @param  array $schema
-     * @param  string $direction
      * @return array
      */
-    private function constructSchema($schema, $direction = 'Add')
+    private function constructSchema($schema)
     {
         if (!$schema) return '';
 
-        $fields = array_map(function ($field) use ($direction) {
-            $method = "{$direction}Column";
-
-            return $this->$method($field);
+        $fields = array_map(function ($field) {
+            return $this->addColumn($field);
         }, $schema);
 
         return implode("\n" . str_repeat(' ', 12), $fields);
@@ -117,18 +91,23 @@ class SyntaxBuilder
             $syntax .= sprintf("->%s(%s)", $method, $value === true ? '' : $value);
         }
 
-        return $syntax .= ';';
+        return $syntax . ';';
     }
 
     /**
      * Swap some custom types like email, to available columns created by Laravel
-     * @param  string $type 
-     * @return void
+     * @param  string $type
+     * @return string
      */
     private function swapTypes($type)
     {
-        if ($type === 'email') $type = 'string';
-
-        return $type;
+        switch ($type) {
+            case 'email':
+                return 'string';
+            case 'url':
+                return 'text';
+            default:
+                return $type;
+        }
     }
 }
