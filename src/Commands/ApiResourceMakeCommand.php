@@ -152,7 +152,7 @@ class ApiResourceMakeCommand extends Command
             case 'request':
                 return sprintf('%s/Http/Requests/%sRequest.php', $this->app_path(), $this->modelName);
             case 'route':
-                return sprintf('%s/Http/routes.php', $this->app_path());
+                return sprintf('%s/routes/api.php', $this->base_path());
         }
         return '';
     }
@@ -224,6 +224,6 @@ class ApiResourceMakeCommand extends Command
         foreach ($this->validationRules as $column => $rule) {
             $rules .= sprintf('%s\'%s\' => \'%s\',%s', str_repeat(' ', 12), $column, implode('|', $rule), PHP_EOL);
         }
-        $stub = str_replace('{{validation_rules}}', $rules, $stub);
+        $stub = str_replace('{{validation_rules}}', trim($rules), $stub);
     }
 }
