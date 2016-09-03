@@ -33,6 +33,7 @@ php artisan make:api-resource <table_name> --schema="<column_name>:<column_type>
 <p>http://laravel.com/docs/5.1/migrations#creating-columns</p>
 <h3>Custom types</h3>
 <p>- email - puts string type column in your migration and email validation for your request</p>
+<p>- url - puts text type column in your migration and url validation in request</p>
 <h3>Column options</h3> 
 <p>foreign, index, unique, default, nullable, first, after, unsigned</p>
 <h3>Example command</h3>
