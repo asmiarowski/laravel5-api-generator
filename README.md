@@ -2,6 +2,7 @@
 Generates boilerplate for laravel REST API: migration, controller, model, request and route.
 
 <h3>Installation</h3>
+
 ```
 composer require --dev asmiarowski/laravel5-api-generator
 ```
