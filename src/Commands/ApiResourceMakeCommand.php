@@ -1,7 +1,7 @@
 <?php
 namespace Smiarowski\Generators\Commands;
 
-use Illuminate\Console\AppNamespaceDetectorTrait;
+use Illuminate\Console\DetectsApplicationNamespace;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Composer;
@@ -12,7 +12,7 @@ use Smiarowski\Generators\Migrations\ValidationBuilder;
 
 class ApiResourceMakeCommand extends Command
 {
-    use AppNamespaceDetectorTrait;
+    use DetectsApplicationNamespace;
     
     /**
      * The console command name.

@@ -14,7 +14,7 @@ class SyntaxBuilder
     /**
      * Create the PHP syntax for the given schema.
      *
-     * @param  string $schema
+     * @param  array $schema
      * @param  string $stub
      * @return string
      */
@@ -54,7 +54,7 @@ class SyntaxBuilder
      * Construct the schema fields.
      *
      * @param  array $schema
-     * @return array
+     * @return string
      */
     private function constructSchema($schema)
     {
